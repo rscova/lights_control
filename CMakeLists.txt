@@ -7,10 +7,10 @@ project(lights_control)
 ################################################################################
 # Packages
 ################################################################################
-find_package(catkin REQUIRED COMPONENTS 
-  message_generation 
+find_package(catkin REQUIRED COMPONENTS
+  message_generation
   std_msgs
-  roscpp 
+  roscpp
   rospy
 )
 
@@ -18,8 +18,13 @@ find_package(catkin REQUIRED COMPONENTS
 # Declare ROS messages, services and actions
 ################################################################################
 add_message_files(
-  FILES 
+  FILES
   LightingControl.msg
+)
+
+add_service_files(
+  FILES
+  ChangeLightStatus.srv
 )
 
 generate_messages(
@@ -31,7 +36,7 @@ generate_messages(
 # Catkin specific configuration
 ################################################################################
 catkin_package(
-  CATKIN_DEPENDS std_msgs message_runtime 
+  CATKIN_DEPENDS std_msgs message_runtime
 )
 
 ################################################################################
@@ -41,5 +46,3 @@ include_directories(include ${catkin_INCLUDE_DIRS})
 
 add_executable(controller src/controller.cpp)
 target_link_libraries(controller ${catkin_LIBRARIES})
-
-

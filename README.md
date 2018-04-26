@@ -1,5 +1,5 @@
-lighting_msgs
+LIGHTS CONTROLLER
 ==============
 
-ROS messages for lighting control used in Domotic applications and SmartHomes.
-
+ROS node for lighting control used in Domotic applications and SmartHomes.
+Include a messages and services 
