@@ -4,19 +4,20 @@
 #include "std_msgs/String.h"
 #include "std_msgs/Bool.h"
 #include "lights_control/LightingControl.h"
+#include "lights_control/LightingControlStamped.h"
 #include "lights_control/ChangeLightStatus.h"
 
 
-lights_control::LightingControl msg;
+lights_control::LightingControlStamped msg;
 
 bool toogleLight(lights_control::ChangeLightStatus::Request &req,
 								 lights_control::ChangeLightStatus::Response &res
 							   )
 {
-	if(msg.id == req.id)
+	if(msg.data.id == req.id)
 	{
-		msg.state = req.state;
-		if(msg.state == req.state)
+		msg.data.state = req.state;
+		if(msg.data.state == req.state)
 			res.result = res.OK;
 	}
 
@@ -32,7 +33,7 @@ int main(int argc, char **argv)
 	ros::init(argc, argv, "controller");
 	ros::NodeHandle n;
 
-	ros::Publisher lights_status_pub = n.advertise<lights_control::LightingControl>("lights_status", 1000);
+	ros::Publisher lights_status_pub = n.advertise<lights_control::LightingControlStamped>("lights_status", 1000);
 	ROS_INFO("Ready /lights_status Topic");
 
 	ros::ServiceServer service = n.advertiseService("change_light_status",toogleLight);
@@ -40,9 +41,9 @@ int main(int argc, char **argv)
 
 	ros::Rate loop_rate(0.5);
 
-	msg.id = 10;
-	msg.name = "luces_habitacion";
-	msg.state = msg.ON;
+	msg.data.id = 10;
+	msg.data.name = "luces_habitacion";
+	msg.data.state = msg.data.ON;
 
 	while (ros::ok())
 	{
