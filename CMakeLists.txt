@@ -27,6 +27,7 @@ add_service_files(
   FILES
   ChangeLightStatus.srv
   ChangeLightName.srv
+  CreateNewLight.srv
 )
 
 generate_messages(
