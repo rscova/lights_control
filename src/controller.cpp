@@ -1,26 +1,29 @@
 #include <iostream>
 #include <string>
+#include <vector>
 
 #include "ros/ros.h"
 #include "std_msgs/String.h"
 #include "std_msgs/Bool.h"
 #include "lights_control/LightingControl.h"
-#include "lights_control/LightingControlStamped.h"
+#include "lights_control/LightingControl.h"
 #include "lights_control/ChangeLightStatus.h"
 #include "lights_control/ChangeLightName.h"
 
 
+using namespace std;
 
-lights_control::LightingControlStamped msg;
+vector<lights_control::LightingControl> v_lights;
+lights_control::LightingControl light;
 
 bool toogleLight(lights_control::ChangeLightStatus::Request &req,
 								 lights_control::ChangeLightStatus::Response &res)
 {
-	if(msg.data.id == req.id)
+	if(light.id == req.id)
 	{
-		msg.data.state = req.state;
+		light.state = req.state;
 
-		if(msg.data.state == req.state)
+		if(light.state == req.state)
 			res.result = res.OK;
 	}
 
@@ -33,11 +36,11 @@ bool toogleLight(lights_control::ChangeLightStatus::Request &req,
 bool changeLightName(lights_control::ChangeLightName::Request &req,
 								 		 lights_control::ChangeLightName::Response &res)
 {
-	if(msg.data.id == req.id)
+	if(light.id == req.id)
 	{
-		msg.data.name = req.name;
+		light.name = req.name;
 
-		if(msg.data.name == req.name)
+		if(light.name == req.name)
 			res.result = res.OK;
 	}
 
@@ -47,39 +50,66 @@ bool changeLightName(lights_control::ChangeLightName::Request &req,
 	return true;
 }
 
+bool createNewLight(lights_control::ChangeLightName::Request &req,
+								 		 lights_control::ChangeLightName::Response &res)
+{
+	light.id = req.id;
+	light.name = req.name;
+	light.state = light.OFF;
+
+	v_lights.push_back(light);
+
+	res.result = res.OK;
+
+ return true;
+}
+
 
 int main(int argc, char **argv)
 {
 	ros::init(argc, argv, "controller");
 	ros::NodeHandle n;
+	ros::Rate loop_rate(1);
 
-	ros::Publisher lights_status_pub = n.advertise<lights_control::LightingControlStamped>("lights_status", 1000);
+	ros::Publisher lights_status_pub = n.advertise<lights_control::LightingControl>("lights_status", 1000);
 	ROS_INFO("Ready /lights_status Topic");
 
 	ros::ServiceServer service1 = n.advertiseService("change_light_status",toogleLight);
   ROS_INFO("Ready /change_light_status Service");
 	ros::ServiceServer service2 = n.advertiseService("change_light_name",changeLightName);
 	ROS_INFO("Ready /change_light_name Service");
+	ros::ServiceServer service3 = n.advertiseService("create_new_light",createNewLight);
+	ROS_INFO("Ready /create_new_light Service");
 
-	ros::Rate loop_rate(10);
 
 	int id = 0;
-	std::string name = "";
+	string name = "";
 	int state = 0;
-	n.param("id",    id, 1);
+	n.param("id",    id, 1101);
 
 	n.param("name",  name, std::string("first_light"));
 	n.param("state",  state, 0);
 
-	msg.data.id = id;
-	msg.data.name = name;
-	msg.data.state = state;
+	light.id = id;
+	light.name = name;
+	light.state = state;
+
+	v_lights.push_back(light);
+
+	light.id = 1102;
+	light.name = "cocina";
+	light.state = 0;
+
+	v_lights.push_back(light);
 
 	while (ros::ok())
 	{
-		lights_status_pub.publish(msg);
-		ros::spinOnce();
-		loop_rate.sleep();
+		for(int i = v_lights.size()-1; i >= 0; i--)
+		{
+			lights_status_pub.publish(v_lights[i]);
+			ros::spinOnce();
+			loop_rate.sleep();
+		}
 	}
 
 	return 0;

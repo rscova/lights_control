@@ -4,7 +4,7 @@
   <arg name="node_name" />
 
   <node pkg="lights_control" type="controller" name="$(arg node_name)"/>
-  <param name="id" value="10" />
-  <param name="name" value="luces_habitacion" />
+  <param name="id" value="1101" />
+  <param name="name" value="habitacion" />
   <param name="state" value="0" />
 </launch>
