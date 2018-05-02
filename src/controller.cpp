@@ -19,16 +19,20 @@ lights_control::LightingControl light;
 bool toogleLight(lights_control::ChangeLightStatus::Request &req,
 								 lights_control::ChangeLightStatus::Response &res)
 {
-	if(light.id == req.id)
+	bool error = true;
+	for(int i = v_lights.size()-1; i >= 0; i--)
 	{
-		light.state = req.state;
-
-		if(light.state == req.state)
-			res.result = res.OK;
+		if(v_lights[i].id == req.id)
+		{
+			v_lights[i].state = req.state;
+			error = false;
+		}
 	}
 
-	else
+	if(error)
 		res.result = res.ERROR;
+	else
+		res.result = res.OK;
 
 	return true;
 }
@@ -36,16 +40,20 @@ bool toogleLight(lights_control::ChangeLightStatus::Request &req,
 bool changeLightName(lights_control::ChangeLightName::Request &req,
 								 		 lights_control::ChangeLightName::Response &res)
 {
-	if(light.id == req.id)
+	bool error = true;
+	for(int i = v_lights.size()-1; i >= 0; i--)
 	{
-		light.name = req.name;
-
-		if(light.name == req.name)
-			res.result = res.OK;
+		if(v_lights[i].id == req.id)
+		{
+			v_lights[i].name = req.name;
+			error = false;
+		}
 	}
 
-	else
+	if(error)
 		res.result = res.ERROR;
+	else
+		res.result = res.OK;
 
 	return true;
 }
