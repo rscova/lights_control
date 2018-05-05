@@ -2,9 +2,7 @@
 <package>
   <name>lights_control</name>
   <version>0.0.1</version>
-  <description>
-    ROS messages for lighting control.
-  </description>
+  <description>The lights_control package</description>
   <maintainer email="saul.cova@ieee.org">Saul Cova</maintainer>
   <author>Saul Cova</author>
   <license>MIT</license>
