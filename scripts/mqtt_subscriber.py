@@ -11,16 +11,17 @@ data_string =  str(data.id) + " " + data.name + " "+str(data.state)
 
 
 def on_message(client, userdata, message):
-    rospy.loginfo("message received " ,str(message.payload.decode("utf-8")))
-    rospy.loginfo("message topic=",message.topic)
-    rospy.loginfo("message qos=",message.qos)
-    rospy.loginfo("message retain flag=",message.retain)
+    rospy.loginfo("message received: %s" ,str(message.payload.decode("utf-8")))
+    rospy.loginfo("message topic: %s",message.topic)
+    rospy.loginfo("message qos: %s",message.qos)
+    rospy.loginfo("message retain flag: %s",message.retain)
 
 
-broker_address="localhost"
-client = mqtt.Client("1")
+broker_address="192.168.1.4"
+port = 1883
+client = mqtt.Client("2")
 client.on_message = on_message
-client.connect(broker_address) #connect to broker
+client.connect(broker_address, port) #connect to broker
 client.loop_start()
 
 
