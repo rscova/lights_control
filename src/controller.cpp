@@ -121,6 +121,7 @@ int main(int argc, char **argv)
 
 	while (ros::ok())
 	{
+		loop_rate = ros::Rate(v_lights.size());
 		for(int i = v_lights.size()-1; i >= 0; i--)
 		{
 			lights_status_pub.publish(v_lights[i]);
