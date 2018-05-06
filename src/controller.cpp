@@ -61,7 +61,7 @@ bool changeLightName(lights_control::ChangeLightName::Request &req,
 bool createNewLight(lights_control::ChangeLightName::Request &req,
 								 		 lights_control::ChangeLightName::Response &res)
 {
-	bool error = true;
+	bool error = false;
 	for(int i = v_lights.size()-1; i >= 0; i--)
 		if(v_lights[i].id == req.id or v_lights[i].name == req.name)
 			error = true;
