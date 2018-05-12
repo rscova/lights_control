@@ -20,7 +20,8 @@ bool toogleLight(lights_control::ChangeLightStatus::Request &req,
 								 lights_control::ChangeLightStatus::Response &res)
 {
 	bool error = true;
-	for(int i = v_lights.size()-1; i >= 0; i--)
+	int i;
+	for(i = v_lights.size()-1; i >= 0; i--)
 	{
 		if(v_lights[i].id == req.id)
 		{
@@ -32,7 +33,9 @@ bool toogleLight(lights_control::ChangeLightStatus::Request &req,
 	if(error)
 		res.result = res.ERROR;
 	else
+	{
 		res.result = res.OK;
+	}
 
 	return true;
 }
