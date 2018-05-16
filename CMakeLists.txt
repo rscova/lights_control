@@ -14,6 +14,8 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
 )
 
+#find_library(wiringPi_LIB wiringPi)
+
 ################################################################################
 # Declare ROS messages, services and actions
 ################################################################################
@@ -46,6 +48,10 @@ catkin_package(
 # Build
 ################################################################################
 include_directories(include ${catkin_INCLUDE_DIRS})
+#include_directories(${WIRINGPI_LIBRARIES})
 
 add_executable(controller src/controller.cpp)
 target_link_libraries(controller ${catkin_LIBRARIES})
+
+#add_executable(raspy_controller src/raspy_controller.cpp)
+#target_link_libraries(raspy_controller ${catkin_LIBRARIES} ${wiringPi_LIB})
