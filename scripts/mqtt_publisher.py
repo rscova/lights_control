@@ -10,7 +10,7 @@ data = LightingControl(1111,'light',0)
 data_string =  str(data.id) + " " + data.name + " "+str(data.state)
 
 #broker_address="127.0.0.1"
-broker_address="192.168.1.4"
+broker_address="192.168.1.6"
 port = 1883
 client = mqtt.Client("1")
 client.connect(broker_address,port) #connect to broker

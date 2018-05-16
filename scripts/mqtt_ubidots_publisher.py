@@ -1,13 +1,16 @@
-#!/usr/bin/env python
-import rospy
-import paho.mqtt.client as mqtt
-import json
 import time
-import ssl
+import json
+import requests
 
-from std_msgs.msg import String
-from lights_control.msg import LightingControl
+# Mqtt
+import paho.mqtt.client as mqtt
+# DHT22 (Temperature and humidity)
+#import Adafruit_DHT
+# Led
+# import RPi.GPIO as GPIO
 
+# Initialize led pins
+#GPIO.setmode(GPIO.BOARD)
 
 # MQTT Variables
 MQTT_BROKER = "127.0.0.1"
@@ -17,7 +20,7 @@ MQTT_TOPIC_PUBLISH = "monitoring"
 MQTT_TOPIC_SUBSCRIBE = "control"
 
 # Ubidots Variables
-TOKEN = "A1E-JIhfhKtgOzHiPD6qXpkQpRONljvyFM"  # Put your TOKEN here
+TOKEN = "A1E-bA1OGoaWvlXyVINAAOk9xNWrf5sbAS"  # Put your TOKEN here
 DEVICE_LABEL = "raspberry-pi"  # Put your device label here
 VARIABLE_LABEL_1 = "temperature"  # Humidity variable
 VARIABLE_LABEL_2 = "humidity"  # Temperature variable
@@ -123,14 +126,14 @@ def on_message_ubidots(mosq, obj, msg):
             "data": "true"
             }
         # GPIO.output(11, True)
-          print("envio True")
+        print("envio True")
     else:
         jsonObject = {
             "type": "light",
             "data": "false"
             }
        # GPIO.output(11, False)
-         print("envio False")
+        print("envio False")
     data_string = json.dumps(jsonObject)
     # Publish message to MQTT Topic
     print data_string
@@ -164,25 +167,41 @@ mqttu.username_pw_set(TOKEN, TOKEN)
 mqttu.connect(MQTT_UBIDOTS_BROKER, MQTT_UBIDOTS_PORT, MQTT_KEEPALIVE_INTERVAL)
 mqttu.loop_start()
 
+try:
+    while True:
+        # Read humidity and temperature
+        #humidity, temperature = Adafruit_DHT.read_retry(sensor, pin)
+        humidity=50
+        temperature=20
+        if humidity is not None and temperature is not None:
+            temperature_formated = "{0:.1f}".format(temperature)
+            humidity_formated = "{0:.1f}".format(humidity)
+            jsonObject = {
+                "type": "dht22",
+                "data": {
+                    "temperature": temperature_formated,
+                    "humidity": humidity_formated
+                    }
+                }
+            data_string = json.dumps(jsonObject)
+            payload = build_payload(
+                temperature_formated, humidity_formated)
+            print("[INFO] Attemping to send data")
+            post_request(payload)
+            print("[INFO] finished")
 
+            # Publish message to MQTT Topic
+            #mqttc.publish(MQTT_TOPIC, 'Temp={0:0.1f}*C  Humidity={1:0.1f}%'.format(temperature, humidity))
+            mqttc.publish(MQTT_TOPIC_PUBLISH, data_string)
 
-def callback(dato):
-    data = dato
-    rospy.loginfo("I heard %s %s %s", data.id, data.name, data.state)
-    payload = json.dumps({"id":data.id, "name":data.name, "state":data.state})
-    client.publish(topic, payload)
+        time.sleep(10)
 
-
-def listener():
-    rospy.init_node('mqtt_publisher', anonymous=True)
-    rospy.Subscriber("lights_status", LightingControl, callback)
-    rospy.spin()
-
-
-if __name__ == '__main__':
-    try:
-        listener()
-    except rospy.ROSInterruptException:
-        client.disconnect()
-        client.loop_stop()
-        pass
+except Exception, e:
+    print str(e)
+    print "Disconnected :("
+    # Disconnect from MQTT_Broker
+    #GPIO.cleanup()
+    mqttc.loop_stop()
+    mqttc.disconnect()
+#finally:
+    #GPIO.cleanup()

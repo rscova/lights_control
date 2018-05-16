@@ -66,7 +66,8 @@ def on_message(client, userdata, message):
             change_light_name_client(data)
 ###########################################################
 
-broker_address="192.168.1.4"
+#broker_address="127.0.0.1"
+broker_address="192.168.1.6"
 port = 1883
 client = mqtt.Client("2")
 client.on_message = on_message
