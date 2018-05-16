@@ -1,6 +1,7 @@
 # LIGHTS CONTROLLER
 
-This repository contains a ROS node for a House lighting control.
+This repository contains a ROS node for a House lighting control. The aim of this proyect
+is connect two machines running a roscore each one.
 
 
 ### Setup instructions
@@ -25,3 +26,21 @@ For subscribe to all topics: $ mosquitto_sub -t '#'
 
 
 **How to use this Package:**
+
+Compile the package: $cd ~/catkin_ws && catkin_make --only-pkg-with-deps lights_control
+
+In machine one (M1) run roscore and launch the light control node:
+ $ roslaunch ligths_control lights_control.launch node_name:=light_controller
+
+You can see the topic /ligth_status
+
+In other terminal of M1 run: $ rosrun lights_control mqtt_publisher.py
+
+In M2 run roscore: $ roscore
+
+Still in M2 run in other terminal: raspy_controller.py
+
+**Useful information:**
+ 
+
+
