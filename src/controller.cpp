@@ -2,9 +2,9 @@
 #include <string>
 #include <vector>
 
-#include "ros/ros.h"
-#include "std_msgs/String.h"
-#include "std_msgs/Bool.h"
+#include <ros/ros.h>
+#include <std_msgs/String.h>
+#include <std_msgs/Bool.h>
 #include "lights_control/LightingControl.h"
 #include "lights_control/LightingControl.h"
 #include "lights_control/ChangeLightStatus.h"
@@ -89,7 +89,7 @@ int main(int argc, char **argv)
 {
 	ros::init(argc, argv, "controller");
 	ros::NodeHandle n;
-	ros::Rate loop_rate(1);
+	ros::Rate loop_rate(10);
 
 	ros::Publisher lights_status_pub = n.advertise<lights_control::LightingControl>("lights_status", 1000);
 	ROS_INFO("Ready /lights_status Topic");
@@ -124,13 +124,14 @@ int main(int argc, char **argv)
 
 	while (ros::ok())
 	{
-		loop_rate = ros::Rate(v_lights.size());
 		for(int i = v_lights.size()-1; i >= 0; i--)
 		{
 			lights_status_pub.publish(v_lights[i]);
 			ros::spinOnce();
 			loop_rate.sleep();
 		}
+
+
 	}
 
 	return 0;

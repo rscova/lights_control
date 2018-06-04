@@ -10,7 +10,7 @@ import paho.mqtt.client as mqtt
 # import RPi.GPIO as GPIO
 
 # Initialize led pins
-GPIO.setmode(GPIO.BOARD)
+#GPIO.setmode(GPIO.BOARD)
 
 # MQTT Variables
 MQTT_BROKER = "127.0.0.1"
@@ -20,7 +20,7 @@ MQTT_TOPIC_PUBLISH = "monitoring"
 MQTT_TOPIC_SUBSCRIBE = "control"
 
 # Ubidots Variables
-TOKEN = "A1E-JIhfhKtgOzHiPD6qXpkQpRONljvyFM"  # Put your TOKEN here
+TOKEN = "A1E-bA1OGoaWvlXyVINAAOk9xNWrf5sbAS"  # Put your TOKEN here
 DEVICE_LABEL = "raspberry-pi"  # Put your device label here
 VARIABLE_LABEL_1 = "temperature"  # Humidity variable
 VARIABLE_LABEL_2 = "humidity"  # Temperature variable
@@ -82,7 +82,7 @@ def on_subscribe(mosq, obj, mid, granted_qos):
 # Define on_publish event Handler
 def on_publish(client, userdata, mid):
     print "Message Published..."
-	
+
 # Define on_message event Handler
 def on_message(mosq, obj, msg):
     print msg.payload
@@ -114,7 +114,7 @@ def on_message(mosq, obj, msg):
                 mqttc.publish(MQTT_TOPIC_PUBLISH, data_string)
     else:
         print msg.payload
-        
+
 # Define on_message event Handler
 def on_message_ubidots(mosq, obj, msg):
     print msg.payload
@@ -126,19 +126,19 @@ def on_message_ubidots(mosq, obj, msg):
             "data": "true"
             }
         # GPIO.output(11, True)
-          print("envio True") 
+        print("envio True")
     else:
         jsonObject = {
             "type": "light",
             "data": "false"
             }
        # GPIO.output(11, False)
-         print("envio False")
+        print("envio False")
     data_string = json.dumps(jsonObject)
     # Publish message to MQTT Topic
     print data_string
     mqttc.publish(MQTT_TOPIC_PUBLISH, data_string)
-        
+
 
 # Initiate MQTT Client
 mqttc = mqtt.Client()
@@ -171,8 +171,8 @@ try:
     while True:
         # Read humidity and temperature
         #humidity, temperature = Adafruit_DHT.read_retry(sensor, pin)
-        humidity=50
-        temperature=20
+        humidity=76
+        temperature=25
         if humidity is not None and temperature is not None:
             temperature_formated = "{0:.1f}".format(temperature)
             humidity_formated = "{0:.1f}".format(humidity)
@@ -188,9 +188,9 @@ try:
                 temperature_formated, humidity_formated)
             print("[INFO] Attemping to send data")
             post_request(payload)
-            print("[INFO] finished")       
-                    
-            # Publish message to MQTT Topic 
+            print("[INFO] finished")
+
+            # Publish message to MQTT Topic
             #mqttc.publish(MQTT_TOPIC, 'Temp={0:0.1f}*C  Humidity={1:0.1f}%'.format(temperature, humidity))
             mqttc.publish(MQTT_TOPIC_PUBLISH, data_string)
 
